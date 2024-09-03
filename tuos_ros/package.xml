@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>tuos_ros</name>
+  <version>0.0.0</version>
+  <description>The TUoS ROS meta-package</description>
+
+  <maintainer email="t.howard@sheffield.ac.uk">Tom Howard</maintainer>
+  <license>CC BY-NC</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <exec_depend>com2009_simulations</exec_depend>
+  <exec_depend>tuos_examples</exec_depend>
+  <exec_depend>tuos_msgs</exec_depend>
+  <exec_depend>tuos_simulations</exec_depend>
+  <exec_depend>tuos_tb3_tools</exec_depend>
+  
+  <export><metapackage/></export>
+
+</package>

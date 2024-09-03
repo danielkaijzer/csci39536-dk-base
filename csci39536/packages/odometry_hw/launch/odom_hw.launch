@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="odometry_hw" name="wqheel_tick_pub" type="wheel_tick_pub.py" />
+    <param name="output_folder" value="$(find odometry_hw)" />
+    <node pkg="odometry_hw" name="odom_graph" type="odom_graph.py"/>
+</launch>
