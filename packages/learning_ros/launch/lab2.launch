@@ -1,0 +1,7 @@
+<launch>
+
+<include file="$(find turtlesim_helper)/launch/turtlesim.launch"/>
+
+<node pkg="learning_ros" name="turtle_square_node" type="turtle_square.py"/>
+
+</launch>
