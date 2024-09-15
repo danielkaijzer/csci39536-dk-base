@@ -2,11 +2,18 @@
 
 <include file="$(find turtlesim_helper)/launch/turtlesim.launch"/>
 
-<node pkg="learning_ros" name="turtle_square_node" type="turtle_square.py"/>
+<!-- Set initial value for converter parameter to Smoots -->
+<param name="converter" value="Smoots" />
+
+<node pkg="learning_ros" name="turtle_square" type="turtle_square.py"/>
 <node pkg="learning_ros" name="distance_calculator" type="distance_calculator.py"/>
+
+<node pkg="learning_ros" name="distance_converter" type="converter.py"/>
+<node pkg="learning_ros" name="parameter_node" type="parameter.py"/>
+
 
 <node pkg="rqt_graph" name="rqt_graph" type="rqt_graph"/>
 
-<node pkg="rostopic" name="rostopic_echo" type="rostopic" output="screen" args="echo /turtle_distance"/>
+<node pkg="rostopic" name="rostopic_echo" type="rostopic" output="screen" args="echo /converted_distance"/>
 
 </launch>

@@ -14,15 +14,16 @@ class DistanceCalculator:
         # Subscribe to output of turtlesim/sim
         self.pose_subscriber = rospy.Subscriber('/turtlesim/turtle1/pose', Pose, self.pose_callback)
 
-        # Publish message to topic called "distance output"
+        # Publish message to topic called "/turtle_distance"
         self.distance_publisher = rospy.Publisher('/turtle_distance', UnitsLabelled, queue_size=10)
 
         # Variables to store the last pose
         self.last_x = None
         self.last_y = None
 
+    # callback: when new data comes in do
     def pose_callback(self, data):
-        # Get the current pose
+        # Get the current pose data
         current_x = data.x
         current_y = data.y
 

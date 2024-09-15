@@ -5,9 +5,10 @@ from geometry_msgs.msg import Twist
 
 rospy.init_node('turtle_square')
 
+# Publish message to topic "/turtlesim/turtle1/cmd_vel"
 pub = rospy.Publisher('/turtlesim/turtle1/cmd_vel', Twist, queue_size=10)
 
-rate = rospy.Rate(1)
+rate = rospy.Rate(1) # 1hz
 
 def move_square():
     twist = Twist()
