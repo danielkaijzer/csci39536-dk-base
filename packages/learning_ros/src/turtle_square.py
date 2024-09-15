@@ -18,7 +18,7 @@ def move_square():
         twist.linear.x = 2.0
         twist.angular.z = 0.0
         pub.publish(twist)
-        rospy.sleep(2)
+        rospy.sleep(2) # turtle moves 2 secs before next command
 
         # Stop and turn
         twist.linear.x = 0.0

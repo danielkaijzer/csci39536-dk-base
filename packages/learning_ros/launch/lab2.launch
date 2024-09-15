@@ -3,5 +3,10 @@
 <include file="$(find turtlesim_helper)/launch/turtlesim.launch"/>
 
 <node pkg="learning_ros" name="turtle_square_node" type="turtle_square.py"/>
+<node pkg="learning_ros" name="distance_calculator" type="distance_calculator.py"/>
+
+<node pkg="rqt_graph" name="rqt_graph" type="rqt_graph"/>
+
+<node pkg="rostopic" name="rostopic_echo" type="rostopic" output="screen" args="echo /turtle_distance"/>
 
 </launch>
