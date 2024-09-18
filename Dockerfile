@@ -57,7 +57,7 @@ RUN pip3 install -r ${REPO_PATH}/dependencies-py3.txt
 
 # copy the source code
 COPY ./packages "${REPO_PATH}/packages"
-COPY ./csci39536/. "$csci39536-dk-base/csci39536"
+COPY ./csci39536/. "${REPO_PATH}/csci39536"
 
 # build packages
 RUN . /opt/ros/${ROS_DISTRO}/setup.sh && \
