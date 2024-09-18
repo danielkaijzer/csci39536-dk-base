@@ -2,3 +2,6 @@
 emacs
 vim
 ros-noetic-turtlesim
+ros-noetic-gazebo-ros-pkgs
+ros-noetic-gazebo-ros-control
+libgazebo11-dev
