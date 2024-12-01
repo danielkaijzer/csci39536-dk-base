@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>multi_robot_follow</name>
+  <version>0.0.1</version>
+  <description>A ROS package for multiple TurtleBot3 robots with leader-follower behavior</description>
+  
+  <maintainer email="your_email@example.com">Your Name</maintainer>
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- Basic ROS dependencies -->
+  <depend>roscpp</depend>
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>cv_bridge</depend>
+
+  <!-- TurtleBot3 dependencies -->
+  <depend>turtlebot3_msgs</depend>
+  <depend>turtlebot3_gazebo</depend>
+  <depend>turtlebot3_description</depend>
+  <depend>turtlebot3_teleop</depend>
+
+  <!-- Gazebo dependencies -->
+  <depend>gazebo_ros</depend>
+  <depend>gazebo_plugins</depend>
+  <depend>gazebo_msgs</depend>
+
+  <!-- URDF related dependencies -->
+  <depend>urdf</depend>
+  <depend>xacro</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>joint_state_publisher</depend>
+
+  <!-- Additional control dependencies -->
+  <depend>tf</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  
+  <export>
+    <gazebo_ros gazebo_model_path="${prefix}/models"/>
+    <gazebo_ros gazebo_media_path="${prefix}/worlds"/>
+  </export>
+</package>
