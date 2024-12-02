@@ -33,14 +33,16 @@ class RobotFollower:
         self.target_found = False
         self.min_area = 500  # Minimum area to consider as valid detection
         
-        # PID control parameters
-        self.p_gain = 0.002
-        self.d_gain = 0.001
+        # PID control parameters - increased for more responsive movement
+        self.p_gain = 0.005  # Increased from 0.002
+        self.d_gain = 0.002  # Increased from 0.001
         self.last_error = 0
         
         # Create and position window
         cv2.namedWindow("Robot Follower", cv2.WINDOW_NORMAL)
         cv2.resizeWindow("Robot Follower", 640, 480)
+        
+        rospy.loginfo("Robot Follower initialized")
 
     def camera_callback(self, data):
         try:
@@ -102,20 +104,28 @@ class RobotFollower:
                     self.move_cmd.angular.z = -(self.p_gain * error_x + self.d_gain * error_diff)
                     
                     # Set forward velocity based on area (distance)
-                    target_area = 8000  # Desired area to maintain
+                    target_area = 5000  # Decreased from 8000 to maintain closer distance
                     area_error = target_area - area
-                    self.move_cmd.linear.x = min(max(area_error * 0.0001, 0.0), 0.3)
+                    self.move_cmd.linear.x = min(max(area_error * 0.0002, 0.0), 0.5)  # Increased multiplier and max speed
+                    
+                    # Debug information
+                    rospy.loginfo(f"Linear velocity: {self.move_cmd.linear.x:.2f}, Angular velocity: {self.move_cmd.angular.z:.2f}")
+                    rospy.loginfo(f"Area: {area:.0f}, Error X: {error_x:.0f}")
                     
                     # Display distance estimation
                     cv2.putText(display_image, f"Area: {int(area)}", (10, 30),
                               cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                    cv2.putText(display_image, f"Vel: {self.move_cmd.linear.x:.2f}", (10, 90),
+                              cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             else:
                 self.target_found = False
+                rospy.loginfo("Target too small")
         else:
             # If target not found, spin to search
             self.target_found = False
             self.move_cmd.angular.z = 0.5
             self.last_error = 0
+            rospy.loginfo("No target found, searching...")
         
         # Add status text to display
         status = "Target Found" if self.target_found else "Searching"

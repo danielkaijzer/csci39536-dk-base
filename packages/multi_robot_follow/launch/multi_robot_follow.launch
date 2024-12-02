@@ -18,12 +18,14 @@
         <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/>
     </group>
 
-
     <!-- Spawn TurtleBot2 (follower) -->
     <group ns="tb2">
-        <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_waffle.urdf.xacro"/>
-        <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" args="-urdf -model turtlebot2 -x 2 -y 2 -z 0 -param robot_description"/>
+        <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find turtlebot3_description)/urdf/turtlebot3_waffle.urdf.xacro'"/>
+        <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" 
+              args="-urdf -model turtlebot2 -x 2 -y 2 -z 0 -param robot_description"/>
         <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/>
     </group>
 
+    <!-- Launch the follower node -->
+    <node pkg="multi_robot_follow" type="robot_follower.py" name="robot_follower" output="screen"/>
 </launch>
