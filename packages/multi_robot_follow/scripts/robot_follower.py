@@ -106,7 +106,7 @@ class RobotFollower:
                     # Set forward velocity based on area (distance)
                     target_area = 5000  # Decreased from 8000 to maintain closer distance
                     area_error = target_area - area
-                    self.move_cmd.linear.x = min(max(area_error * 0.0002, 0.0), 0.5)  # Increased multiplier and max speed
+                    self.move_cmd.linear.x = min(max(abs(area_error * 0.0002), 0.0), 0.5)  # Increased multiplier and max speed
                     
                     # Debug information
                     rospy.loginfo(f"Linear velocity: {self.move_cmd.linear.x:.2f}, Angular velocity: {self.move_cmd.angular.z:.2f}")
@@ -158,3 +158,4 @@ if __name__ == '__main__':
         follower.run()
     except rospy.ROSException as e:
         rospy.logerr(str(e))
+

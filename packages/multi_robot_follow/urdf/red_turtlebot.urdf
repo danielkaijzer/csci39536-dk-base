@@ -1,122 +1,14 @@
 <?xml version="1.0"?>
-<robot name="red_turtlebot" xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <!-- Define materials -->
-  <material name="red">
-    <color rgba="1 0 0 1"/>
-  </material>
-  <material name="black">
-    <color rgba="0 0 0 1"/>
-  </material>
-
-  <!-- Base Link -->
-  <link name="base_link">
-    <visual>
-      <geometry>
-        <box size="0.5 0.3 0.2"/>  <!-- Made taller for better visibility -->
-      </geometry>
-      <material name="red"/>
-    </visual>
-    <collision>
-      <geometry>
-        <box size="0.5 0.3 0.2"/>
-      </geometry>
-    </collision>
-    <inertial>
-      <mass value="1.0"/>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
-    </inertial>
-  </link>
-
-  <!-- Wheel Links -->
-  <link name="left_wheel">
-    <visual>
-      <geometry>
-        <cylinder length="0.1" radius="0.05"/>
-      </geometry>
-      <material name="black"/>
-    </visual>
-    <collision>
-      <geometry>
-        <cylinder length="0.1" radius="0.05"/>
-      </geometry>
-    </collision>
-    <inertial>
-      <mass value="0.2"/>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
-    </inertial>
-  </link>
-
-  <link name="right_wheel">
-    <visual>
-      <geometry>
-        <cylinder length="0.1" radius="0.05"/>
-      </geometry>
-      <material name="black"/>
-    </visual>
-    <collision>
-      <geometry>
-        <cylinder length="0.1" radius="0.05"/>
-      </geometry>
-    </collision>
-    <inertial>
-      <mass value="0.2"/>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
-    </inertial>
-  </link>
-
-  <!-- Joints -->
-  <joint name="left_wheel_joint" type="continuous">
-    <parent link="base_link"/>
-    <child link="left_wheel"/>
-    <origin xyz="-0.25 0.15 -0.025" rpy="-1.5708 0 0"/>
-    <axis xyz="0 0 1"/>
-  </joint>
-
-  <joint name="right_wheel_joint" type="continuous">
-    <parent link="base_link"/>
-    <child link="right_wheel"/>
-    <origin xyz="-0.25 -0.15 -0.025" rpy="-1.5708 0 0"/>
-    <axis xyz="0 0 1"/>
-  </joint>
-
-  <!-- Gazebo-specific elements -->
+<robot name="red_turtlebot3" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Include the standard TurtleBot3 URDF -->
+  <xacro:include filename="$(find turtlebot3_description)/urdf/turtlebot3_waffle.urdf.xacro"/>
+  
+  <!-- Override the base color to red -->
   <gazebo reference="base_link">
     <material>Gazebo/Red</material>
-    <mu1>0.2</mu1>
-    <mu2>0.2</mu2>
   </gazebo>
-
-  <gazebo reference="left_wheel">
-    <material>Gazebo/Black</material>
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
-  </gazebo>
-
-  <gazebo reference="right_wheel">
-    <material>Gazebo/Black</material>
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
-  </gazebo>
-
-  <!-- Add differential drive plugin -->
-  <gazebo>
-    <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
-      <leftJoint>left_wheel_joint</leftJoint>
-      <rightJoint>right_wheel_joint</rightJoint>
-      <robotNamespace>/tb1</robotNamespace>
-      <wheelSeparation>0.3</wheelSeparation>
-      <wheelDiameter>0.1</wheelDiameter>
-      <commandTopic>cmd_vel</commandTopic>
-      <odometryTopic>odom</odometryTopic>
-      <odometryFrame>odom</odometryFrame>
-      <robotBaseFrame>base_link</robotBaseFrame>
-      <publishWheelTF>true</publishWheelTF>
-      <publishOdomTF>true</publishOdomTF>
-      <publishWheelJointState>true</publishWheelJointState>
-      <updateRate>30</updateRate>
-    </plugin>
+  
+  <gazebo reference="base_scan">
+    <material>Gazebo/Red</material>
   </gazebo>
 </robot>

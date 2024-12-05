@@ -27,5 +27,5 @@
     </group>
 
     <!-- Launch the follower node -->
-    <node pkg="multi_robot_follow" type="robot_follower.py" name="robot_follower" output="screen"/>
+    <node pkg="multi_robot_follow" type="robot_follower.py" name="robot_follower" output="screen" ns="tb2"/>
 </launch>
