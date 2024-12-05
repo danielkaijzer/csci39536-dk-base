@@ -2,7 +2,7 @@
 <launch>
     <!-- Launch Gazebo with an empty world -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="$(find turtlebot3_gazebo)/worlds/empty.world"/>
+        <arg name="world_name" value="$(find multi_robot_follow)/worlds/myworld.world"/>
         <arg name="paused" value="false"/>
         <arg name="use_sim_time" value="true"/>
         <arg name="gui" value="true"/>
@@ -27,5 +27,5 @@
     </group>
 
     <!-- Launch the follower node -->
-    <node pkg="multi_robot_follow" type="robot_follower.py" name="robot_follower" output="screen" ns="tb2"/>
+    <node pkg="multi_robot_follow" type="robot_follower.py" name="robot_follower" output="screen"/>
 </launch>
