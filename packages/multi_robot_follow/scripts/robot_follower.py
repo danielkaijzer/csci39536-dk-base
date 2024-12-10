@@ -9,7 +9,7 @@ from tf.transformations import euler_from_quaternion
 from nav_msgs.msg import Odometry
 import math
 
-class EnhancedRobotFollower:
+class RobotFollower:
     def __init__(self):
         rospy.init_node('robot_follower', anonymous=True)
         self.rate = rospy.Rate(10)
@@ -60,7 +60,7 @@ class EnhancedRobotFollower:
         cv2.namedWindow("Robot Follower", cv2.WINDOW_NORMAL)
         cv2.resizeWindow("Robot Follower", 640, 480)
         
-        rospy.loginfo("Enhanced Robot Follower initialized")
+        rospy.loginfo("Robot Follower initialized")
     
     def odom_callback(self, msg):
         """Update robot's current orientation from odometry data"""
@@ -227,7 +227,7 @@ class EnhancedRobotFollower:
 
     def run(self):
         try:
-            rospy.loginfo("Enhanced Robot Follower Node Started")
+            rospy.loginfo("Robot Follower Node Started")
             while not rospy.is_shutdown():
                 self.rate.sleep()
         except rospy.ROSInterruptException:
@@ -240,7 +240,7 @@ class EnhancedRobotFollower:
 
 if __name__ == '__main__':
     try:
-        follower = EnhancedRobotFollower()
+        follower = RobotFollower()
         follower.run()
     except rospy.ROSException as e:
         rospy.logerr(str(e))
