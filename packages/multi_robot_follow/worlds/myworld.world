@@ -1,140 +1,166 @@
 <sdf version="1.6">
   <world name="default">
-
-    <!-- Voeg de standaard grond toe -->
     <include>
       <uri>model://ground_plane</uri>
     </include>
 
-    <!-- Voeg zonlicht toe -->
     <include>
       <uri>model://sun</uri>
     </include>
-
-    <!-- Bruine vloer met aardebruine kleur -->
+    
+    
+    
+    <!-- Brown floor (visual only) -->
     <model name="brown_floor">
       <static>true</static>
       <link name="link">
         <visual name="visual">
           <geometry>
             <box>
-              <size>20 20 0.1</size> <!-- Maak een platte vloer -->
+              <size>20 20 0.1</size>
             </box>
           </geometry>
           <material>
-            <ambient>0.36 0.20 0.10 1.0</ambient> <!-- Aardebruine kleur -->
-            <diffuse>0.36 0.20 0.10 1.0</diffuse> <!-- Aardebruine kleur -->
+            <ambient>0.36 0.20 0.10 1.0</ambient>
+            <diffuse>0.36 0.20 0.10 1.0</diffuse>
             <specular>0.2 0.2 0.2 1.0</specular>
           </material>
         </visual>
       </link>
     </model>
 
-    <!-- Eerste boom toevoegen met unieke naam -->
+    <!-- Pine trees with more spacing -->
+
+   <include>
+      <uri>model://pine_tree</uri>
+      <pose>4 1 0 0 0 0</pose>
+    </include>
+    
     <include>
       <uri>model://pine_tree</uri>
-      <pose>2 3 0 0 0 0</pose> <!-- Eerste boom locatie -->
+      <name>pine_tree_4</name>
+      <pose>-3 2 0 0 0 0</pose>
     </include>
+ 
 
-    <!-- Tweede boom toevoegen met unieke naam -->
-    <include>
-      <uri>model://pine_tree</uri>
-      <name>pine_tree_2</name> <!-- Unieke naam voor de tweede boom -->
-      <pose>5 3 0 0 0 0</pose> <!-- Tweede boom locatie -->
-    </include>
-    
-    <!-- Derde boom toevoegen met unieke naam -->
-    <include>
-      <uri>model://pine_tree</uri>
-      <name>pine_tree_3</name> <!-- Unieke naam voor de tweede boom -->
-      <pose>-1 3 0 0 0 0</pose> <!-- Tweede boom locatie -->
-    </include>
+    <!-- Lamp posts spaced out -->
+    <model name="lamp_post_1">
+      <static>true</static>
+      <pose>-2 4 0 0 0 0</pose>
+      <link name="link">
+        <collision name="collision_pole">
+          <geometry>
+            <cylinder>
+              <radius>0.1</radius>
+              <length>3.0</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="visual_pole">
+          <geometry>
+            <cylinder>
+              <radius>0.1</radius>
+              <length>3.0</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.3 0.3 0.3 1</ambient>
+            <diffuse>0.3 0.3 0.3 1</diffuse>
+          </material>
+        </visual>
+        <visual name="visual_light">
+          <pose>0 0 1.5 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.4 0.4 0.2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 1 0 1</ambient>
+            <diffuse>1 1 0 1</diffuse>
+            <emissive>1 1 0 1</emissive>
+          </material>
+        </visual>
+      </link>
+    </model>
 
-    <!-- vierde boom toevoegen met unieke naam -->
-    <include>
-      <uri>model://pine_tree</uri>
-      <name>pine_tree_4</name> <!-- Unieke naam voor de tweede boom -->
-      <pose>-4 3 0 0 0 0</pose> <!-- Tweede boom locatie -->
-    </include>
-    
-    <!-- vijfde boom toevoegen met unieke naam -->
-    <include>
-      <uri>model://pine_tree</uri>
-      <name>pine_tree_5</name> <!-- Unieke naam voor de tweede boom -->
-      <pose>8 3 0 0 0 0</pose> <!-- Tweede boom locatie -->
-    </include>
-    
-    <include>
-      <uri>model://LampPost</uri>
-      <pose>2 9 0 0 0 0</pose> <!-- Pas deze aan voor locatie en oriëntatie -->
-    </include>
-    
-    <include>
-      <uri>model://LampPost</uri>
-      <name>lamp2</name> <!-- Unieke naam voor de tweede boom -->
-      <pose>5 9 0 0 0 0</pose> <!-- Pas deze aan voor locatie en oriëntatie -->
-    </include>
-    
-    <include>
-      <uri>model://LampPost</uri>
-      <name>lamp3</name> <!-- Unieke naam voor de tweede boom -->
-      <pose> -1 9 0 0 0</pose> <!-- Pas deze aan voor locatie en oriëntatie -->
-    </include>
-    
-    <include>
-      <uri>model://LampPost</uri>
-      <name>lamp4</name> <!-- Unieke naam voor de tweede boom -->
-      <pose> -4 9 0 0 0</pose> <!-- Pas deze aan voor locatie en oriëntatie -->
-    </include>
+    <model name="lamp_post_2">
+      <static>true</static>
+      <pose>4 4 0 0 0 0</pose>
+      <!-- Same structure as lamp_post_1 -->
+    </model>
 
-    <include>
-      <uri>model://LampPost</uri>
-      <name>lamp5</name> <!-- Unieke naam voor de tweede boom -->
-      <pose> -7 9 0 0 0</pose> <!-- Pas deze aan voor locatie en oriëntatie -->
-    </include>
-    
-    <include>
-      <uri>model://LampPost</uri>
-      <name>lamp6</name> <!-- Unieke naam voor de tweede boom -->
-      <pose> -10 9 0 0 0</pose> <!-- Pas deze aan voor locatie en oriëntatie -->
-    </include>
-    
-    <include>
-      <uri>model://LampPost</uri>
-      <name>lamp7</name> <!-- Unieke naam voor de tweede boom -->
-      <pose> 8 9 0 0 0</pose> <!-- Pas deze aan voor locatie en oriëntatie -->
-    </include>
-    
-    <include>
-      <uri>model://LampAndStand</uri>
-      <pose>-6 -5 0 0 0 0</pose> <!-- Eerste boom locatie -->
-    </include>
-    
-    <include>
-      <uri>model://Sofa</uri>
-      <pose>-8 -5 0 0 0 0</pose> <!-- Eerste boom locatie -->
-    </include>
-    
-    <include>
-      <uri>model://Sofa</uri>
-      <name>sofa2</name> <!-- Unieke naam voor de tweede boom -->
-      <pose>-4 -5 0 0 0 3.14159</pose> <!-- Eerste boom locatie -->
-    </include>
+    <!-- Wall -->
+    <model name="grey_wall_1">
+      <static>true</static>
+      <pose>-3 -2 0 0 0 0.785</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>3.0 0.2 2.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>3.0 0.2 2.0</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.7 0.7 0.7 1</ambient>
+            <diffuse>0.7 0.7 0.7 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
 
-    <include>
-      <uri>model://Greywall</uri>
-      <pose>-9 -5 0 0 0 1.57</pose> <!-- Eerste boom locatie -->
-    </include>
-
-    <include>
-      <uri>model://FemaleVisitor</uri>
-      <pose>-8 -3 0 0 0 1.57</pose> <!-- Eerste boom locatie -->
-    </include>
-    
-    <include>
-      <uri>model://redcar</uri>
-      <pose>-8 -10 0 0 0 0</pose> <!-- Eerste boom locatie -->
-    </include>
+    <!-- Sofa -->
+    <model name="sofa_1">
+      <static>true</static>
+      <pose>-4 1 0 0 0 1.57</pose>
+      <link name="link">
+        <collision name="collision_base">
+          <geometry>
+            <box>
+              <size>2.0 0.8 0.4</size>
+            </box>
+          </geometry>
+        </collision>
+        <collision name="collision_back">
+          <pose>-0.4 0 0.4 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>2.0 0.2 0.8</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual_base">
+          <geometry>
+            <box>
+              <size>2.0 0.8 0.4</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.4 0.2 0.1 1</ambient>
+            <diffuse>0.4 0.2 0.1 1</diffuse>
+          </material>
+        </visual>
+        <visual name="visual_back">
+          <pose>-0.4 0 0.4 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>2.0 0.2 0.8</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.4 0.2 0.1 1</ambient>
+            <diffuse>0.4 0.2 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
 
 
   </world>
