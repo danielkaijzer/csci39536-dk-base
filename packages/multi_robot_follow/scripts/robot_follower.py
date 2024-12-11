@@ -9,20 +9,22 @@ import math
 
 class RobotFollower:
 	def __init__(self):
+		
+		# Initialize the ROS node
 		rospy.init_node('robot_follower', anonymous=True)
-		self.rate = rospy.Rate(10)
+		self.rate = rospy.Rate(10) # 10 Hz update rate
 
-		# Initialize CV bridge
+		# Initialize OpenCV bridge
 		self.bridge = CvBridge()
 
 		# Subscribe to sensors
 		self.image_sub = rospy.Subscriber('/tb2/camera/rgb/image_raw', Image, self.camera_callback)
 		self.lidar_sub = rospy.Subscriber('/tb2/scan', LaserScan, self.lidar_callback)
 
-		# Publisher for robot movement
+		# Publisher for robot movement commands
 		self.cmd_vel_pub = rospy.Publisher('/tb2/cmd_vel', Twist, queue_size=1)
 
-		# Initialize movement message
+		# Initialize movement command message
 		self.move_cmd = Twist()
 
 		# Target color (red) in HSV
@@ -44,11 +46,11 @@ class RobotFollower:
 		# PID control parameters
 		self.p_gain = 0.005
 		self.d_gain = 0.002
-		self.last_error = 0
+		self.last_error = 0 # Used later for determining search direction
 
 		# Obstacle avoidance parameters
-		self.min_obstacle_distance = 0.5  # meters
-		self.obstacle_scan_angle = 120  # degrees total scan angle
+		self.min_obstacle_distance = 0.5  # Minimum acceptable distance to an obstacle in meters
+		self.obstacle_scan_angle = 120  # Total angle (in degrees) to scan for obstacles
 		self.lidar_data = None
 
 		# Create window for visualization
@@ -59,7 +61,9 @@ class RobotFollower:
     
     
 	def lidar_callback(self, msg):
-		"""Process LiDAR data for obstacle detection"""
+		"""
+		Process LiDAR data for obstacle detection
+		"""
 		self.lidar_data = msg.ranges
 
 		# Calculate the indices for the front sector of the robot
@@ -82,6 +86,7 @@ class RobotFollower:
 		if obstacle_distances and min(obstacle_distances) < self.min_obstacle_distance:
 			self.obstacle_detected = True
 			print("Obstacle detected ", self.obstacle_detected)
+			
 			# Find the direction with more space
 			left_distances = msg.ranges[start_idx:mid_idx]
 			right_distances = msg.ranges[mid_idx:end_idx]
@@ -90,27 +95,71 @@ class RobotFollower:
 			self.avoidance_direction = 1 if left_avg > right_avg else -1
 		else:
 			self.obstacle_detected = False
+			
 
 	def find_safe_direction(self):
-		"""Find the safest direction to move based on LiDAR data"""
-		if not self.lidar_data:
-	    		return 0
-            
-		# Create sectors for directional analysis
-		sectors = np.array_split(self.lidar_data, 8)  # Split into 8 sectors
-		sector_averages = []
+		"""
+		Find the safest direction to move based on the LiDAR data.
 
+		This function splits the LiDAR sensor data into 8 equal sectors and calculates the average
+		distance for each sector. It then determines the sector with the largest average distance,
+		which is considered the safest direction to move in.
+
+		The function returns a normalized value between -1 and 1, where -1 represents turning left,
+		0 represents moving straight, and 1 represents turning right. This value can be used to
+		adjust the robot's angular velocity to steer it towards the safest available direction.
+
+		Returns:
+		float: A normalized value between -1 and 1 representing the safest direction to move.
+		"""
+		if not self.lidar_data:
+			# If no LiDAR data is available, return 0 to move straight
+			return 0
+
+		# Split the LiDAR data into 8 equal sectors
+		sectors = np.array_split(self.lidar_data, 8)
+
+		# Calculate the average distance for each sector, excluding any infinite or NaN values
+		sector_averages = []
 		for sector in sectors:
 			valid_readings = [r for r in sector if not math.isinf(r) and not math.isnan(r)]
 			if valid_readings:
 				sector_averages.append(np.mean(valid_readings))
 			else:
+				# If a sector has no valid readings, assume it has a large obstacle and set the average to 0
 				sector_averages.append(0)
-        
-		# Return the index of the sector with the most space
-		return (np.argmax(sector_averages) - 4) / 4.0  # Normalize to [-1, 1]
+
+		# Determine the index of the sector with the largest average distance
+		# This is considered the safest direction to move in
+		safest_sector_idx = np.argmax(sector_averages)
+
+		# Normalize the index to a value between -1 and 1
+		# -1 represents turning left, 0 represents moving straight, and 1 represents turning right
+		return (safest_sector_idx - 4) / 4.0
+
 
 	def camera_callback(self, data):
+		"""
+		Callback function for processing camera images and controlling the robot's movement.
+		
+		This function is called whenever a new camera image is received. It processes the image to
+        detect the target object, calculates the control inputs based on the target's position, and
+        publishes the movement commands to the robot.
+
+        If the target is detected, the function calculates the error between the target's position and
+        the center of the image, and uses a PID controller to set the robot's angular velocity. It also
+        adjusts the linear velocity based on the size of the detected target.
+
+        If an obstacle is detected, the function switches to obstacle avoidance mode, using the
+        `find_safe_direction` method to determine the safest direction to move.
+
+        If the target is lost, the function calls the `search_behavior` method to search for the target.
+		
+		Args:
+            data (sensor_msgs.msg.Image): The incoming camera image.
+		"""
+
+
 		try:
 			cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
 		except CvBridgeError as e:
@@ -137,6 +186,7 @@ class RobotFollower:
 		self.move_cmd = Twist()
         
 		if contours:
+			
 			largest_contour = max(contours, key=cv2.contourArea)
 			area = cv2.contourArea(largest_contour)
 
@@ -150,12 +200,6 @@ class RobotFollower:
 					cx = int(M['m10']/M['m00'])
 					cy = int(M['m01']/M['m00'])
 					self.last_target_position = (cx, cy)
-					
-
-					# Draw visualization
-					cv2.circle(display_image, (cx, cy), 5, (0, 255, 0), -1)
-					x, y, w, h = cv2.boundingRect(largest_contour)
-					cv2.rectangle(display_image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
 					# Calculate control inputs
 					if not self.obstacle_detected:
@@ -197,7 +241,19 @@ class RobotFollower:
 		cv2.imshow("Robot Follower", display_image)
 		cv2.waitKey(1)
 
+
 	def search_behavior(self, display_image):
+		"""
+		Implement the robot's search behavior when the target is lost or hasn't been seen.
+		
+		If an obstacle is detected, the robot first backs up to create some distance from the obstacle,
+        and then uses the last known target direction to search for the target. If no obstacle is
+        detected, the robot performs a pure rotational search, turning left or right based on the
+        last known target direction.
+		
+		Args:
+            display_image (numpy.ndarray): The current camera image to be displayed.
+		"""
 	
 		self.frames_without_target += 1
 		
