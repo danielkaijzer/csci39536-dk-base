@@ -184,9 +184,9 @@ class RobotFollower:
 						else:
 							self.move_cmd.linear.x = 0.05  # Slow movement while avoiding
 			else:
-				self.handle_target_loss(display_image)
+				self.search_behavior(display_image)
 		else:
-			self.handle_target_loss(display_image)
+			self.search_behavior(display_image)
         
 		# Display status and metrics
 		self.display_status(display_image)
@@ -198,34 +198,43 @@ class RobotFollower:
 		cv2.imshow("Robot Follower", display_image)
 		cv2.waitKey(1)
 
-	def handle_target_loss(self, display_image):
-		"""Handle behavior when target is temporarily lost"""
+	def search_behavior(self, display_image):
+	
 		self.frames_without_target += 1
+		
+		# if target is considered "lost"
 		if self.frames_without_target > self.max_frames_without_target:
+		
 			self.target_found = False
 			
+			# If target lost and obstacle, back up!
 			if self.obstacle_detected:
 				# First back up from obstacle
+				
 				self.move_cmd.linear.x = -0.15  # Back up
 				self.move_cmd.angular.z = 0.0
 				
 				# If we've backed up enough (using frames as a simple timer)
 				if self.frames_without_target > self.max_frames_without_target + 15:  # Extra 15 frames for backing up
-					self.move_cmd.linear.x = 0.0  # Stop backing
+					self.move_cmd.linear.x = 0.0  # Stop backing up
+					
 					# Use the last known target direction for search
 					if self.last_error is not None:
 						search_direction = 0.3 if self.last_error > 0 else -0.3
 						self.move_cmd.angular.z = search_direction
 					else:
-						self.move_cmd.angular.z = 0.4
+						self.move_cmd.angular.z = -0.4
 			else:
 				# Pure rotation search when no obstacles
 				if self.last_error is not None:
 					search_direction = 0.3 if self.last_error > 0 else -0.3
 					self.move_cmd.angular.z = search_direction
 				else:
-					self.move_cmd.angular.z = 0.4
-				self.move_cmd.linear.x = 0.0  # Ensure we're not moving forward
+					self.move_cmd.angular.z = -0.4
+					
+				self.move_cmd.linear.x = 0.0  # MAYBE ADD SUBTLE MOVEMENT
+				
+				
 			cv2.putText(display_image, "Searching for target...", (10, 150),
 				   cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
 		
