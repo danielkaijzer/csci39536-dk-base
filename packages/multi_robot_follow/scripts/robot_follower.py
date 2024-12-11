@@ -154,7 +154,6 @@ class RobotFollower:
 
 					# Draw visualization
 					cv2.circle(display_image, (cx, cy), 5, (0, 255, 0), -1)
-					# cv2.rectangle(display_image, *cv2.boundingRect(largest_contour)[:4], (0, 255, 0), 2)
 					x, y, w, h = cv2.boundingRect(largest_contour)
 					cv2.rectangle(display_image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
