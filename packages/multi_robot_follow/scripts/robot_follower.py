@@ -200,32 +200,41 @@ class RobotFollower:
 					cx = int(M['m10']/M['m00'])
 					cy = int(M['m01']/M['m00'])
 					self.last_target_position = (cx, cy)
+					
+					
+					# Calculate base control inputs
+					image_center = cv_image.shape[1]/2
+					error_x = cx - image_center
+					error_diff = error_x - self.last_error
+					self.last_error = error_x
 
 					# Calculate control inputs
-					if not self.obstacle_detected:
-						# Normal following behavior
-						image_center = cv_image.shape[1]/2
-						error_x = cx - image_center
-						error_diff = error_x - self.last_error
-						self.last_error = error_x
+					if self.obstacle_detected:
+						# Blend target following with obstacle avoidance
+						safe_direction = self.find_safe_direction()
+    
+						# Weighted combination of target direction and safe direction
+						# Adjust weights based on obstacle proximity
+						min_distance = min([d for d in self.lidar_data if not math.isinf(d) and not math.isnan(d)])
+						obstacle_weight = max(0, min(1, (self.min_obstacle_distance - min_distance) / self.min_obstacle_distance))
+						target_weight = 1 - obstacle_weight
 
-						# Set velocities
+						# Combine target following and obstacle avoidance
+						target_angular = -(self.p_gain * error_x + self.d_gain * error_diff)
+						self.move_cmd.angular.z = (target_weight * target_angular + 
+								     obstacle_weight * safe_direction)
+
+						# Adjust linear velocity based on obstacle proximity
+						target_area = 5000
+						area_error = abs(target_area - area)  # Using absolute value
+						base_linear_vel = min(area_error * 0.0002, 0.5)
+						self.move_cmd.linear.x = base_linear_vel * (1 - obstacle_weight)
+					else:
+						# Normal following behavior when no obstacles
 						self.move_cmd.angular.z = -(self.p_gain * error_x + self.d_gain * error_diff)
 						target_area = 5000
-						area_error = target_area - area
-						self.move_cmd.linear.x = min(max(area_error * 0.0002, 0.0), 0.5)
-					else:
-						# Obstacle avoidance mode
-						safe_direction = self.find_safe_direction()
-						self.move_cmd.angular.z = safe_direction
-
-						# More aggressive obstacle avoidance
-						min_distance = min([d for d in self.lidar_data if not math.isinf(d) and not math.isnan(d)])
-						if min_distance < 0.3:
-							self.move_cmd.linear.x = -0.15  # Back up more aggressively
-							rospy.loginfo("Too close to obstacle - backing up")
-						else:
-							self.move_cmd.linear.x = 0.05  # Slow movement while avoiding
+						area_error = target_area - area  # Using absolute value
+						self.move_cmd.linear.x = min(area_error * 0.0002, 0.5)
 			else:
 				self.search_behavior(display_image)
 		else:
@@ -264,21 +273,16 @@ class RobotFollower:
 			
 			# If target lost and obstacle, back up!
 			if self.obstacle_detected:
-				# First back up from obstacle
 				
-				self.move_cmd.linear.x = -0.15  # Back up
-				self.move_cmd.angular.z = 0.0
+				safe_direction = self.find_safe_direction()
+				
+				self.move_cmd.angular.z = safe_direction * 0.3
+				self.move_cmd.linear.x = 0.05
 				
 				# If we've backed up enough (using frames as a simple timer)
-				if self.frames_without_target > self.max_frames_without_target + 15:  # Extra 15 frames for backing up
-					self.move_cmd.linear.x = 0.0  # Stop backing up
+				if min([d for d in self.lidar_data if not math.isinf(d) and not math.isnan(d)]) < 0.3:
+					self.move_cmd.linear.x = -0.15
 					
-					# Use the last known target direction for search
-					if self.last_error is not None:
-						search_direction = 0.3 if self.last_error > 0 else -0.3
-						self.move_cmd.angular.z = search_direction
-					else:
-						self.move_cmd.angular.z = -0.4
 			else:
 				# Pure rotation search when no obstacles
 				if self.last_error is not None:
